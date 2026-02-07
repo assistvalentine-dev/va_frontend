@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { verifyOtp, resendOtp } from "../utils/api";
 
@@ -12,25 +12,39 @@ const VerifyOtp = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  const [timer, setTimer] = useState(30); // 30-second cooldown
+  const [canResend, setCanResend] = useState(false);
+
+  // Start countdown when page loads
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    } else {
+      setCanResend(true);
+    }
+  }, [timer]);
+
   const handleVerify = async () => {
     setLoading(true);
     try {
       const res = await verifyOtp({ email, otp });
 
       if (res.success) {
-        // Now check payment status in backend (you can fetch user again if needed)
         if (res.data.paymentStatus === "PAID") {
           navigate("/success");
-        } else if(res.data.paymentStatus === "FREE") {
+        } else if (res.data.paymentStatus === "FREE") {
           navigate("/free-success");
         } else {
           navigate("/payment");
         }
-        
       } else {
         setMessage(res.message);
       }
-    } catch (err) {
+    } catch {
       setMessage("Verification failed. Try again.");
     } finally {
       setLoading(false);
@@ -41,6 +55,8 @@ const VerifyOtp = () => {
     try {
       await resendOtp({ email });
       setMessage("New OTP sent to your email.");
+      setTimer(30);      // restart timer
+      setCanResend(false);
     } catch {
       setMessage("Failed to resend OTP.");
     }
@@ -64,9 +80,18 @@ const VerifyOtp = () => {
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
 
-        <button onClick={handleResend} className="text-romantic-500 mt-2">
-          Resend OTP
-        </button>
+        {canResend ? (
+          <button
+            onClick={handleResend}
+            className="text-romantic-500 mt-2 underline"
+          >
+            Resend OTP
+          </button>
+        ) : (
+          <p className="text-gray-400 mt-2">
+            Resend available in {timer}s
+          </p>
+        )}
 
         {message && <p className="text-red-400 mt-3">{message}</p>}
       </div>
