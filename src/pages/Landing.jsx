@@ -13,7 +13,7 @@ const Landing = () => {
       {/* message */}
       <div className="fixed top-0 left-0 w-full bg-romantic-600 text-white py-2 flex justify-center items-center gap-4 z-50">
         <div className="animate-marquee whitespace-nowrap">
-          🎉 Limited Time Offer! Register Now for Priority Matching!
+          🎉 Limited Time Offer! Early Blinders Special: First 10 Get Free Matching! Limited Time Offer! 🎉
         </div>
       </div>
 
@@ -124,16 +124,16 @@ const Landing = () => {
           <p className="mb-2">
             Facing any issues? Message ous on{" "}
             <a
-              href="https://www.instagram.com/_.gauravsinghbora?igsh=azZiODAzOWprNmRs"
+              href="https://www.instagram.com/valentine.assist?igsh=MXNrNDhseW8yb2ZyOQ%3D%3D&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
               className="text-romantic-500 font-semibold hover:underline"
             >
-              @gauravsinghbora
+              @valentine.assist
             </a>
           </p>
           <p className="text-gray-500">
-            © {new Date().getFullYear()} Blind Dating. All rights reserved.
+            © {new Date().getFullYear()} valentine.assist . All rights reserved.
           </p>
         </div>
       </div>

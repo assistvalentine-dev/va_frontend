@@ -12,7 +12,6 @@ const UserForm = () => {
     gender: '',
     interestedIn: '',
     college: '',
-    phone: '',
     email: '',
     relationshipGoal: '',
     description: '',
@@ -59,10 +58,6 @@ const UserForm = () => {
       newErrors.college = 'College is required';
     }
 
-    if (!formData.phone.trim() || !/^[0-9]{10}$/.test(formData.phone)) {
-      newErrors.phone = 'Phone number must be exactly 10 digits';
-    }
-
     if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
@@ -71,12 +66,12 @@ const UserForm = () => {
       newErrors.relationshipGoal = 'Please select a relationship goal';
     }
 
-    if (!formData.description.trim() || formData.description.trim().length < 50) {
-      newErrors.description = 'Description must be at least 50 characters';
+    if (!formData.description.trim() || formData.description.trim().length < 10) {
+      newErrors.description = 'Description must be at least 10 characters';
     }
 
-    if (!formData.preferences.trim() || formData.preferences.trim().length < 50) {
-      newErrors.preferences = 'Preferences must be at least 50 characters';
+    if (!formData.preferences.trim() || formData.preferences.trim().length < 10) {
+      newErrors.preferences = 'Preferences must be at least 10 characters';
     }
     if (!formData.interests) {
       newErrors.interests = 'Please select an option';
@@ -101,23 +96,31 @@ const UserForm = () => {
       });
 
     if (response.success) {
-      const userId = response.data.userId;
-      const status = response.data.paymentStatus;
-
-      // store userId only once
+      const { userId, email, paymentStatus, verifiedId } = response.data;
       sessionStorage.setItem('userId', userId);
 
-      if (status === "FREE") {
-        navigate("/success");
-      } else {
-        navigate("/payment");
+      // Case 1 — user is not verified → go to OTP page
+      if (!verifiedId) {
+        navigate("/verify-otp", { state: { email, userId } });
+        return;
       }
 
-    } else {
-      setErrors({ submit: response.message || 'Failed to create user' });
+      // Case 2 — verified but needs payment (PENDING)
+      if (paymentStatus === "PENDING") {
+        navigate("/payment", { state: { email, userId } });
+        return;
+      }
+
+      // Case 3 — FREE user → go straight to success
+      if (paymentStatus === "FREE") {
+        navigate("/success");
+        return;
+      }
+    }
+ else {
+      setErrors({ submit: response.message || 'Failed to create user ' });
     }
     } catch (error) {
-      console.error('Error creating user:', error);
       if (error.response?.data?.errors) {
         const apiErrors = {};
         error.response.data.errors.forEach((err) => {
@@ -140,6 +143,7 @@ const UserForm = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Tell Us About Yourself</h1>
           <p className="text-gray-400">Help us find your perfect match</p>
+          <span className="text-sm text-romantic-600 mt-1 block"> *Your information is safe with us and will only be used to find compatible matches.*</span>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 border border-gray-700 space-y-6">
@@ -247,23 +251,6 @@ const UserForm = () => {
             {errors.college && <p className="text-red-400 text-sm mt-1">{errors.college}</p>}
           </div>
 
-          {/* Phone */}
-          <div>
-            <label htmlFor="phone" className="label-field">
-              Phone Number *
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="input-field"
-              placeholder="Enter 10-digit phone number"
-              maxLength="10"
-            />
-            {errors.phone && <p className="text-red-400 text-sm mt-1">{errors.phone}</p>}
-          </div>
 
           {/* Email */}
           <div>
@@ -305,7 +292,7 @@ const UserForm = () => {
           {/* Description */}
           <div>
             <label htmlFor="description" className="label-field">
-              Short Self Description * (Min 50 characters)
+              Short Self Description *
             </label>
             <textarea
               id="description"
@@ -325,7 +312,7 @@ const UserForm = () => {
           {/* Preferences */}
           <div>
             <label htmlFor="preferences" className="label-field">
-              Partner Preferences * (Min 50 characters)
+              Partner Preferences * 
             </label>
             <textarea
               id="preferences"
@@ -376,7 +363,7 @@ const UserForm = () => {
               disabled={loading}
               className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Submitting...' : 'Continue to Payment'}
+              {loading ? 'Submitting...' : 'verify email'}
             </button>
           </div>
         </form>

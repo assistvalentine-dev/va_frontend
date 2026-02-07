@@ -75,7 +75,7 @@ const Success = () => {
                 <div>
                   <h3 className="font-semibold text-white mb-1">Get Notified</h3>
                   <p className="text-gray-400 text-sm">
-                    You'll receive an email or phone call within 7-14 business days with your match details
+                    You'll receive an email or phone call within 1–2 business days with your match details
                   </p>
                 </div>
               </div>
@@ -85,7 +85,7 @@ const Success = () => {
           {/* Expected Timeline */}
           <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
             <p className="text-blue-300 text-sm">
-              <strong>Expected Matching Time:</strong> 7-14 business days
+              <strong>Expected Matching Time:</strong> 1–2 business days
             </p>
             <p className="text-blue-300 text-sm mt-2">
               We'll contact you via email or phone once we find your perfect match!
@@ -96,8 +96,8 @@ const Success = () => {
           <div className="pt-4 border-t border-gray-700">
             <p className="text-gray-400 text-sm">
               Have questions? Contact us at{' '}
-              <a href="mailto:support@blinddating.com" className="text-romantic-400 hover:underline">
-                support@blinddating.com
+              <a href="mailto:assistvalentine@gmail.com" className="text-romantic-400 hover:underline">
+                assistvalentine@gmail.com
               </a>
             </p>
           </div>

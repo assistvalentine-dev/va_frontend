@@ -9,13 +9,23 @@ const api = axios.create({
   },
 });
 
-// User API
+// ---------- USER APIs ----------
 export const createUser = async (userData) => {
   const response = await api.post('/users/create', userData);
   return response.data;
 };
 
-// Payment API
+export const verifyOtp = async (data) => {
+  const response = await api.post('/users/verify-otp', data);
+  return response.data;
+};
+
+export const resendOtp = async (data) => {
+  const response = await api.post('/users/resend-otp', data);
+  return response.data;
+};
+
+// ---------- PAYMENT APIs ----------
 export const createPaymentOrder = async (userId, amount) => {
   const response = await api.post('/payments/create-order', {
     userId,
@@ -33,12 +43,3 @@ export const verifyPayment = async (userId, paymentData) => {
 };
 
 export default api;
-
-export const getUserByEmail = async (email) => {
-  return axios.get(`/api/users/me?email=${email}`);
-};
-
-export const updateUser = async (userId, data) => {
-  return axios.put(`/api/users/update/${userId}`, data);
-};
-
